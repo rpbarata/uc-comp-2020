@@ -33,7 +33,7 @@ newLine                                             \n|\r|\r\n
 whitespace                                          [ \t\f]
 %%
 char                                                {newToken("CHAR");} 
-else                                    Realits            {newToken("ELSE");} 
+else                                                {newToken("ELSE");} 
 while                                               {newToken("WHILE");} 
 if                                                  {newToken("IF");} 
 int                                                 {newToken("INT");} 
