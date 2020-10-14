@@ -11,7 +11,7 @@ Rui Barata, Nº2015238609
   #define PRINT_TOKENS_ERRORS   5
   #define PRINT_ERRORS          6
 
-  int flag;
+  int flag = PRINT_ERRORS;
   int line = 1;
   int column = 1;
   int line_cached;
@@ -21,72 +21,72 @@ Rui Barata, Nº2015238609
   void newTokenyyText(char*);
   void throwError(int);
   void initBlockComment();
+  void errorBlockComment();
   void endBlockComment();
 %}
-number9                                             [0-9]
-number7                                             [0-7]
-real                                                ({number9}*\.?{number9}+|{number9}+\.?{number9}*)([eE][-+]?{number9}+)?
-id                                                  [a-zA-Z_][a-zA-Z_0-9]*
-char                                                \\({number7}{number7}?{number7}?|n|t|\\|\'|\")|[^'\n\\]
-reserved                                            \[|\]|\+\+|\-\-|auto|break|case|const|continue|default|do|enum|extern|float|for|goto|inline|long|register|restrict|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|_Bool|_Complex|_Imaginary
-newLine                                             \n|\r|\r\n
-whitespace                                          [ \t\f]
+number9                   [0-9]
+number7                   [0-7]
+real                      ({number9}*\.?{number9}+|{number9}+\.?{number9}*)([eE][-+]?{number9}+)?
+id                        [a-zA-Z_][a-zA-Z_0-9]*
+char                      \\({number7}{number7}?{number7}?|n|t|\\|\'|\")|[^'\n\\]
+reserved                  \[|\]|\+\+|\-\-|auto|break|case|const|continue|default|do|enum|extern|float|for|goto|inline|long|register|restrict|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|_Bool|_Complex|_Imaginary
+newLine                   \n|\r|\r\n
+whitespace                [ \t\f]
 %%
-char                                                {newToken("CHAR");} 
-else                                                {newToken("ELSE");} 
-while                                               {newToken("WHILE");} 
-if                                                  {newToken("IF");} 
-int                                                 {newToken("INT");} 
-short                                               {newToken("SHORT");} 
-double                                              {newToken("DOUBLE");} 
-return                                              {newToken("RETURN");} 
-void                                                {newToken("VOID");} 
-\&                                                  {newToken("BITWISEAND");} 
-\|                                                  {newToken("BITWISEOR");} 
-\^                                                  {newToken("BITWISEXOR");} 
-\&\&                                                {newToken("AND");} 
-\=                                                  {newToken("ASSIGN");} 
-\*                                                  {newToken("MUL");} 
-\,                                                  {newToken("COMMA");} 
-\/                                                  {newToken("DIV");} 
-\=\=                                                {newToken("EQ");} 
-\>\=                                                {newToken("GE");} 
-\>                                                  {newToken("GT");} 
-\{                                                  {newToken("LBRACE");} 
-\<\=                                                {newToken("LE");} 
-\(                                                  {newToken("LPAR");} 
-\<                                                  {newToken("LT");} 
-\-                                                  {newToken("MINUS");} 
-\%                                                  {newToken("MOD");} 
-\!\=                                                {newToken("NE");}
-\!                                                  {newToken("NOT");}
-\|\|                                                {newToken("OR");}
-\+                                                  {newToken("PLUS");}
-\}                                                  {newToken("RBRACE");}
-\)                                                  {newToken("RPAR");}
-\;                                                  {newToken("SEMI");}
-\/\/.*                                              {column += yyleng;}
-\/\*                                                {BEGIN COMMENT; initBlockComment();}
-<COMMENT>{newLine}                                  {line_cached += 1; column_cached = 1;}
-<COMMENT>.                                          {column_cached += yyleng;}
-<COMMENT>\*\/                                       {BEGIN 0; endBlockComment();}
-<COMMENT><<EOF>>                                    {throwError(UNTERMINATED_COMMENT); column = column_cached; line = line_cached; BEGIN 0;}
-{reserved}                                          {newTokenyyText("RESERVED");}
-{id}                                                {newTokenyyText("ID");}
-{number9}+                                         {newTokenyyText("INTLIT");}
-{real}                                              {newTokenyyText("REALLIT");}
-'{char}'                                            {newTokenyyText("CHRLIT");}
-'([^'\n\r\\]|(\\.))*'                               {throwError(INVALID_CHAR);}
-'([^'\n\r\\]|(\\.))*\\?                             {throwError(UNTERMINATED_CHAR);}
-{newLine}                                           {line++; column = 1;}
-{whitespace}                                         {column += yyleng;}
-<<EOF>>                                             {return 0;}
-.                                                   {throwError(ILLEGAL_CHAR);}
+char                      { newToken("CHAR"); } 
+else                      { newToken("ELSE"); } 
+while                     { newToken("WHILE"); } 
+if                        { newToken("IF"); } 
+int                       { newToken("INT"); } 
+short                     { newToken("SHORT"); } 
+double                    { newToken("DOUBLE"); } 
+return                    { newToken("RETURN"); } 
+void                      { newToken("VOID"); } 
+\&                        { newToken("BITWISEAND"); } 
+\|                        { newToken("BITWISEOR"); } 
+\^                        { newToken("BITWISEXOR"); } 
+\&\&                      { newToken("AND"); } 
+\=                        { newToken("ASSIGN"); } 
+\*                        { newToken("MUL"); } 
+\,                        { newToken("COMMA"); } 
+\/                        { newToken("DIV"); } 
+\=\=                      { newToken("EQ"); } 
+\>\=                      { newToken("GE"); } 
+\>                        { newToken("GT"); } 
+\{                        { newToken("LBRACE"); } 
+\<\=                      { newToken("LE"); } 
+\(                        { newToken("LPAR"); } 
+\<                        { newToken("LT"); } 
+\-                        { newToken("MINUS"); } 
+\%                        { newToken("MOD"); } 
+\!\=                      { newToken("NE"); }
+\!                        { newToken("NOT"); }
+\|\|                      { newToken("OR"); }
+\+                        { newToken("PLUS"); }
+\}                        { newToken("RBRACE"); }
+\)                        { newToken("RPAR"); }
+\;                        { newToken("SEMI"); }
+\/\/.*                    { column += yyleng; }
+\/\*                      { BEGIN COMMENT; initBlockComment(); }
+<COMMENT>{newLine}        { line_cached += 1; column_cached = 1; }
+<COMMENT>.                { column_cached += yyleng; }
+<COMMENT>\*\/             { BEGIN 0; endBlockComment(); }
+<COMMENT><<EOF>>          { errorBlockComment(); BEGIN 0; }
+{reserved}                { newTokenyyText("RESERVED"); }
+{id}                      { newTokenyyText("ID"); }
+{number9}+                { newTokenyyText("INTLIT"); }
+{real}                    { newTokenyyText("REALLIT"); }
+'{char}'                  { newTokenyyText("CHRLIT"); }
+'([^'\n\r\\]|(\\.))*'     { throwError(INVALID_CHAR); }
+'([^'\n\r\\]|(\\.))*\\?   { throwError(UNTERMINATED_CHAR); }
+{newLine}                 { line++; column = 1; }
+{whitespace}              { column += yyleng; }
+<<EOF>>                   { return 0; }
+.                         { throwError(ILLEGAL_CHAR); }
 %%
 int main(int argc, char** argv) {
-  flag = PRINT_ERRORS; // print errors
   if(argc == 2) {
-    if (strcmp(argv[1], "-l") == 0) flag = PRINT_TOKENS_ERRORS; //print tokens + errors
+    if (strcmp(argv[1], "-l") == 0) flag = PRINT_TOKENS_ERRORS;
   }
 
   yylex();
@@ -133,6 +133,12 @@ void throwError(int error) {
 void initBlockComment() {
   line_cached = line;
   column_cached = column + yyleng;
+}
+
+void errorBlockComment() {
+  throwError(UNTERMINATED_COMMENT); 
+  column = column_cached;
+  line = line_cached;
 }
 
 void endBlockComment() {
