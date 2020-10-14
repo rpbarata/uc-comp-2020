@@ -29,7 +29,7 @@ number7                   [0-7]
 real                      ({number9}*\.?{number9}+|{number9}+\.?{number9}*)([eE][-+]?{number9}+)?
 id                        [a-zA-Z_][a-zA-Z_0-9]*
 char                      \\({number7}{number7}?{number7}?|n|t|\\|\'|\")|[^'\n\\]
-reserved                  \[|\]|\+\+|\-\-|auto|break|case|const|continue|default|do|enum|extern|float|for|goto|inline|long|register|restrict|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|_Bool|_Complex|_Imaginary
+reserved                  \[|\]|\+\+|\-\-|auto|break|case|const|continue|default|do|enum|extern|float|for|goto|inline|long|register|restrict|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|_Bool|_Complex|_Imaginary|_Pragma
 newLine                   \n|\r|\r\n
 whitespace                [ \t\f]
 %%
