@@ -367,13 +367,13 @@ static const flex_int16_t yy_accept[220] =
        17,   41,   33,   24,   14,   20,   40,   39,   12,   40,
        40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
        40,   40,   40,   40,   40,   21,   11,   31,   37,   36,
-       36,   37,   46,   27,   13,   45,    0,   44,    0,   39,
+       36,   37,   46,   27,   13,   45,    0,   44,   45,   39,
        42,   35,   34,   42,   41,    0,   22,   18,   19,   40,
        40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
        39,   40,   40,   40,   40,   40,   40,    4,   40,   40,
        40,   40,   40,   40,   40,   40,   40,   40,   40,   29,
 
-       36,   38,   45,   43,    0,   43,   45,   34,   42,    0,
+       36,   38,   45,   43,   45,   43,   45,   34,   42,    0,
        42,   40,   40,   40,   40,   40,   40,   40,   40,   40,
        40,   40,   40,   40,   40,   40,   39,   40,   40,    5,
        40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
@@ -594,11 +594,13 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "uccompiler.l"
-/*
-Rui Barata, Nº2015238609
+/* 
+::::::::::::::::::::::::::::::::::
+:::: Rui Barata, Nº2015238609 ::::
+::::::::::::::::::::::::::::::::::
 */
 
-#line 7 "uccompiler.l"
+#line 9 "uccompiler.l"
   #define INVALID_CHAR          1
   #define UNTERMINATED_COMMENT  2
   #define UNTERMINATED_CHAR     3
@@ -618,8 +620,8 @@ Rui Barata, Nº2015238609
   void initBlockComment();
   void errorBlockComment();
   void endBlockComment();
-#line 622 "lex.yy.c"
-#line 623 "lex.yy.c"
+#line 624 "lex.yy.c"
+#line 625 "lex.yy.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -837,9 +839,9 @@ YY_DECL
 		}
 
 	{
-#line 35 "uccompiler.l"
+#line 37 "uccompiler.l"
 
-#line 843 "lex.yy.c"
+#line 845 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -898,260 +900,260 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 36 "uccompiler.l"
+#line 38 "uccompiler.l"
 { newToken("CHAR"); } 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 37 "uccompiler.l"
+#line 39 "uccompiler.l"
 { newToken("ELSE"); } 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 38 "uccompiler.l"
+#line 40 "uccompiler.l"
 { newToken("WHILE"); } 
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 39 "uccompiler.l"
+#line 41 "uccompiler.l"
 { newToken("IF"); } 
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 40 "uccompiler.l"
+#line 42 "uccompiler.l"
 { newToken("INT"); } 
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 41 "uccompiler.l"
+#line 43 "uccompiler.l"
 { newToken("SHORT"); } 
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 42 "uccompiler.l"
+#line 44 "uccompiler.l"
 { newToken("DOUBLE"); } 
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 43 "uccompiler.l"
+#line 45 "uccompiler.l"
 { newToken("RETURN"); } 
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 44 "uccompiler.l"
+#line 46 "uccompiler.l"
 { newToken("VOID"); } 
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 45 "uccompiler.l"
+#line 47 "uccompiler.l"
 { newToken("BITWISEAND"); } 
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 46 "uccompiler.l"
+#line 48 "uccompiler.l"
 { newToken("BITWISEOR"); } 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 47 "uccompiler.l"
+#line 49 "uccompiler.l"
 { newToken("BITWISEXOR"); } 
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 48 "uccompiler.l"
+#line 50 "uccompiler.l"
 { newToken("AND"); } 
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 49 "uccompiler.l"
+#line 51 "uccompiler.l"
 { newToken("ASSIGN"); } 
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 50 "uccompiler.l"
+#line 52 "uccompiler.l"
 { newToken("MUL"); } 
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 51 "uccompiler.l"
+#line 53 "uccompiler.l"
 { newToken("COMMA"); } 
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 52 "uccompiler.l"
+#line 54 "uccompiler.l"
 { newToken("DIV"); } 
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 53 "uccompiler.l"
+#line 55 "uccompiler.l"
 { newToken("EQ"); } 
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 54 "uccompiler.l"
+#line 56 "uccompiler.l"
 { newToken("GE"); } 
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 55 "uccompiler.l"
+#line 57 "uccompiler.l"
 { newToken("GT"); } 
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 56 "uccompiler.l"
+#line 58 "uccompiler.l"
 { newToken("LBRACE"); } 
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 57 "uccompiler.l"
+#line 59 "uccompiler.l"
 { newToken("LE"); } 
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 58 "uccompiler.l"
+#line 60 "uccompiler.l"
 { newToken("LPAR"); } 
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 59 "uccompiler.l"
+#line 61 "uccompiler.l"
 { newToken("LT"); } 
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 60 "uccompiler.l"
+#line 62 "uccompiler.l"
 { newToken("MINUS"); } 
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 61 "uccompiler.l"
+#line 63 "uccompiler.l"
 { newToken("MOD"); } 
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 62 "uccompiler.l"
+#line 64 "uccompiler.l"
 { newToken("NE"); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 63 "uccompiler.l"
+#line 65 "uccompiler.l"
 { newToken("NOT"); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 64 "uccompiler.l"
+#line 66 "uccompiler.l"
 { newToken("OR"); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 65 "uccompiler.l"
+#line 67 "uccompiler.l"
 { newToken("PLUS"); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 66 "uccompiler.l"
+#line 68 "uccompiler.l"
 { newToken("RBRACE"); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 67 "uccompiler.l"
+#line 69 "uccompiler.l"
 { newToken("RPAR"); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 68 "uccompiler.l"
+#line 70 "uccompiler.l"
 { newToken("SEMI"); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 69 "uccompiler.l"
+#line 71 "uccompiler.l"
 { column += yyleng; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 70 "uccompiler.l"
-{ BEGIN COMMENT; initBlockComment(); }
+#line 72 "uccompiler.l"
+{ initBlockComment(); }
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 71 "uccompiler.l"
+#line 73 "uccompiler.l"
 { line_cached += 1; column_cached = 1; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 72 "uccompiler.l"
+#line 74 "uccompiler.l"
 { column_cached += yyleng; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 73 "uccompiler.l"
-{ BEGIN 0; endBlockComment(); }
+#line 75 "uccompiler.l"
+{ endBlockComment(); }
 	YY_BREAK
 case YY_STATE_EOF(COMMENT):
-#line 74 "uccompiler.l"
-{ errorBlockComment(); BEGIN 0; }
+#line 76 "uccompiler.l"
+{ errorBlockComment(); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 75 "uccompiler.l"
+#line 77 "uccompiler.l"
 { newTokenyyText("RESERVED"); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 76 "uccompiler.l"
+#line 78 "uccompiler.l"
 { newTokenyyText("ID"); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 77 "uccompiler.l"
+#line 79 "uccompiler.l"
 { newTokenyyText("INTLIT"); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 78 "uccompiler.l"
+#line 80 "uccompiler.l"
 { newTokenyyText("REALLIT"); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 79 "uccompiler.l"
+#line 81 "uccompiler.l"
 { newTokenyyText("CHRLIT"); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 80 "uccompiler.l"
+#line 82 "uccompiler.l"
 { throwError(INVALID_CHAR); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 81 "uccompiler.l"
+#line 83 "uccompiler.l"
 { throwError(UNTERMINATED_CHAR); }
 	YY_BREAK
 case 46:
 /* rule 46 can match eol */
 YY_RULE_SETUP
-#line 82 "uccompiler.l"
+#line 84 "uccompiler.l"
 { line++; column = 1; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 83 "uccompiler.l"
+#line 85 "uccompiler.l"
 { column += yyleng; }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 84 "uccompiler.l"
+#line 86 "uccompiler.l"
 { return 0; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 85 "uccompiler.l"
+#line 87 "uccompiler.l"
 { throwError(ILLEGAL_CHAR); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 86 "uccompiler.l"
+#line 88 "uccompiler.l"
 ECHO;
 	YY_BREAK
-#line 1155 "lex.yy.c"
+#line 1157 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2154,7 +2156,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 86 "uccompiler.l"
+#line 88 "uccompiler.l"
 
 int main(int argc, char** argv) {
   if(argc == 2) {
@@ -2203,6 +2205,7 @@ void throwError(int error) {
 }
 
 void initBlockComment() {
+  BEGIN COMMENT;
   line_cached = line;
   column_cached = column + yyleng;
 }
@@ -2211,9 +2214,11 @@ void errorBlockComment() {
   throwError(UNTERMINATED_COMMENT); 
   column = column_cached;
   line = line_cached;
+  BEGIN 0;
 }
 
 void endBlockComment() {
+  BEGIN 0;
   line = line_cached;
   column = column_cached + yyleng;
 }

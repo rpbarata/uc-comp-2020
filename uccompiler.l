@@ -1,5 +1,7 @@
-/*
-Rui Barata, Nº2015238609
+/* 
+::::::::::::::::::::::::::::::::::
+:::: Rui Barata, Nº2015238609 ::::
+::::::::::::::::::::::::::::::::::
 */
 
 %X COMMENT
@@ -67,18 +69,18 @@ void                      { newToken("VOID"); }
 \)                        { newToken("RPAR"); }
 \;                        { newToken("SEMI"); }
 \/\/.*                    { column += yyleng; }
-\/\*                      { BEGIN COMMENT; initBlockComment(); }
+\/\*                      { initBlockComment(); }
 <COMMENT>{newLine}        { line_cached += 1; column_cached = 1; }
 <COMMENT>.                { column_cached += yyleng; }
-<COMMENT>\*\/             { BEGIN 0; endBlockComment(); }
-<COMMENT><<EOF>>          { errorBlockComment(); BEGIN 0; }
+<COMMENT>\*\/             { endBlockComment(); }
+<COMMENT><<EOF>>          { errorBlockComment(); }
 {reserved}                { newTokenyyText("RESERVED"); }
 {id}                      { newTokenyyText("ID"); }
 {number9}+                { newTokenyyText("INTLIT"); }
 {real}                    { newTokenyyText("REALLIT"); }
 '{char}'                  { newTokenyyText("CHRLIT"); }
 '([^'\n\r\\]|(\\.))*'     { throwError(INVALID_CHAR); }
-'([^'\n\r\\]|(\\.))*      { throwError(UNTERMINATED_CHAR); }
+'([^'\n\r\\]|(\\.))*\\?   { throwError(UNTERMINATED_CHAR); }
 {newLine}                 { line++; column = 1; }
 {whitespace}              { column += yyleng; }
 <<EOF>>                   { return 0; }
@@ -131,6 +133,7 @@ void throwError(int error) {
 }
 
 void initBlockComment() {
+  BEGIN COMMENT;
   line_cached = line;
   column_cached = column + yyleng;
 }
@@ -139,9 +142,11 @@ void errorBlockComment() {
   throwError(UNTERMINATED_COMMENT); 
   column = column_cached;
   line = line_cached;
+  BEGIN 0;
 }
 
 void endBlockComment() {
+  BEGIN 0;
   line = line_cached;
   column = column_cached + yyleng;
 }
