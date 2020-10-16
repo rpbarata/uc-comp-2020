@@ -78,7 +78,7 @@ void                      { newToken("VOID"); }
 {real}                    { newTokenyyText("REALLIT"); }
 '{char}'                  { newTokenyyText("CHRLIT"); }
 '([^'\n\r\\]|(\\.))*'     { throwError(INVALID_CHAR); }
-'([^'\n\r\\]|(\\.))*\\?   { throwError(UNTERMINATED_CHAR); }
+'([^'\n\r\\]|(\\.))*      { throwError(UNTERMINATED_CHAR); }
 {newLine}                 { line++; column = 1; }
 {whitespace}              { column += yyleng; }
 <<EOF>>                   { return 0; }
