@@ -6,6 +6,7 @@ Rui Barata, Nº2015238609
 %{
   #include "ast.h"
   #include "y.tab.h"
+  #include "symTable.h"
   #define INVALID_CHAR                      1
   #define UNTERMINATED_COMMENT              2
   #define UNTERMINATED_CHAR                 3
@@ -14,6 +15,7 @@ Rui Barata, Nº2015238609
   #define PRINT_TOKENS_ERRORS               6 // 2
   #define PRINT_SYNTAX_AND_LEXICAL_ERRORS   7 // 3
   #define PRINT_SYNTAX_TREE                 8 // 4
+  #define PRINT_SYMB_TABLE_AND_TREE         9
 
   int flag = PRINT_SYNTAX_AND_LEXICAL_ERRORS;
   int errorFlag = 0;
@@ -95,10 +97,11 @@ void                      { newToken("VOID"); return VOID;}
 %%
 int main(int argc, char** argv) {
   if(argc == 2) {
-    if (strcmp(argv[1], "-l") == 0) flag = PRINT_TOKENS_ERRORS;
-    else if (strcmp(argv[1], "-e1") == 0) flag = PRINT_ERRORS;
-    else if (strcmp(argv[1], "-t") == 0) flag = PRINT_SYNTAX_TREE;
-    else if (strcmp(argv[1], "-e2") == 0) flag = PRINT_SYNTAX_AND_LEXICAL_ERRORS;
+    if (strcmp(argv[1], "-l") == 0) flag = PRINT_TOKENS_ERRORS; //2
+    else if (strcmp(argv[1], "-e1") == 0) flag = PRINT_ERRORS; //1
+    else if (strcmp(argv[1], "-t") == 0) flag = PRINT_SYNTAX_TREE; //4
+    else if (strcmp(argv[1], "-e2") == 0) flag = PRINT_SYNTAX_AND_LEXICAL_ERRORS; //3
+    else if (strcmp(argv[1], "-s") == 0) flag = PRINT_SYMB_TABLE_AND_TREE; //6
   }
 
   yyparse();
@@ -108,6 +111,11 @@ int main(int argc, char** argv) {
 
   if(!errorFlag) {
     if(flag == PRINT_SYNTAX_TREE) printTree(treeRoot, 0);
+    else if(flag == PRINT_SYMB_TABLE_AND_TREE){
+      handleNode(treeRoot);
+      printTables();
+      printTree(treeRoot, 0);
+    }
   }
 
   freeTree(treeRoot);

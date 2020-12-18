@@ -135,10 +135,10 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 24 "uccompiler.y"
+#line 22 "uccompiler.y"
 
   char *value;
-  char *node;
+  Node node;
 
 #line 144 "y.tab.h"
 

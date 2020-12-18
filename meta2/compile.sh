@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
-flex $1.l
-yacc -d $1.y
-gcc -o $1 y.tab.c lex.yy.c
+flex uccompiler.l
+yacc -d -v uccompiler.y
+clang-3.9 -Wall -o uccompiler -Wno-unused-function *.c
