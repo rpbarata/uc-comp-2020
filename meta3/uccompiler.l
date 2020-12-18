@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
   }
 
   yyparse();
-  if (treeRoot == NULL){
+  if (treeRoot == NULL) {
     return 0;
   }
 

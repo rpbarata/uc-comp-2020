@@ -1,13 +1,17 @@
 %{
   #include "ast.h"
+  #include "structs.h"
+  int yylex(void);
+  void yyerror (char *s);
   extern int line;
   extern int yyleng;
   extern int column;
   extern char* yytext;
   extern int flag;
   extern int errorFlag;
-  int yylex(void);
-  void yyerror (char *s);
+  Node node1;
+  Node node2;
+
 %}
 
 %token CHAR ELSE WHILE IF INT SHORT DOUBLE RETURN VOID BITWISEAND BITWISEOR BITWISEXOR AND ASSIGN MUL COMMA DIV EQ GE GT LBRACE LE LPAR LT MINUS MOD NE NOT OR PLUS RBRACE RPAR SEMI RESERVED
@@ -67,7 +71,7 @@ FunctionDeclaration:
     ;
 
 FunctionDeclarator:
-    ID LPAR ParameterList RPAR  {$$ = createNode(Id, $1); aux = createNode(ParamList, NULL); addBrother($$, aux); addChild(aux, $3);}
+    ID LPAR ParameterList RPAR  {$$ = createNode(Id, $1); node1 = createNode(ParamList, NULL); addBrother($$, node1); addChild(node1, $3);}
     ;
 
 ParameterList:
@@ -83,12 +87,12 @@ ParameterDeclaration:
 Declaration:
     TypeSpec DeclaratorList SEMI  {addBrother($1, $2->child);
                                    $2->child = $1;
-                                   aux = $2->brother;
-                                   while(aux != NULL){
-                                      aux2 = createNode($1->label, NULL);
-                                      addBrother(aux2, aux->child);
-                                      aux->child = aux2;
-                                      aux = aux->brother;
+                                   node1 = $2->brother;
+                                   while(node1 != NULL){
+                                      node2 = createNode($1->label, NULL);
+                                      addBrother(node2, node1->child);
+                                      node1->child = node2;
+                                      node1 = node1->brother;
                                    }
                                    $$ = $2;}
   | error SEMI                    {$$ = createNode(Null, NULL);}
@@ -228,7 +232,7 @@ ExprL:
 ExprM:
       ExprN               {$$ = $1;}
     | ID LPAR RPAR        {$$ = createNode(Call, NULL); addChild($$, createNode(Id, $1));}
-    | ID LPAR ExprL RPAR  {$$ = createNode(Call, NULL); aux = createNode(Id, $1); addChild($$, aux); addBrother(aux, $3);}
+    | ID LPAR ExprL RPAR  {$$ = createNode(Call, NULL); node1 = createNode(Id, $1); addChild($$, node1); addBrother(node1, $3);}
     | ID LPAR error RPAR  {$$ = createNode(Null, NULL); free($1);}
     ;
 

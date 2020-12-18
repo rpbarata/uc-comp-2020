@@ -47,5 +47,6 @@ typedef struct _tl{
 
 TableList globalTable;
 TableList currentTable;
+Node treeRoot;
 
 #endif
