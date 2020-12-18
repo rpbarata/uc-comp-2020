@@ -59,15 +59,10 @@ void printTables() {
 
 int handleNode(Node node)
 {
-  if (DEBUG)
-    printf("\tHandling %s %s\n", node->value, labelToString(node->label));
-
   switch (node->label)
   {
   case Program:
   {
-    if (DEBUG)
-      printf("%s is %s\n", labelToString(node->label), labelToString(Program));
     globalTable = (TableList)malloc(sizeof(_tableList));
     SymList newNode = (SymList)malloc(sizeof(_SymList));
     newNode->name = "Global";
@@ -100,8 +95,6 @@ int handleNode(Node node)
 
   case FuncDefinition:
   {
-    if (DEBUG)
-      printf("%s is %s\n", labelToString(node->label), labelToString(FuncDefinition));
     Node typeSpec = node->child;
     Node id = typeSpec->brother;
     Node paramList = id->brother;
@@ -120,44 +113,21 @@ int handleNode(Node node)
       {
         Node typeSpec = paramDec->child;
         Node id = typeSpec->brother;
-        if (DEBUG)
-        {
-          if (id != NULL)
-            printf("Got label %s and name %s\n", labelToString(typeSpec->label), id->value);
-          else
-            printf("Got label %s and name %s\n", labelToString(typeSpec->label), NULL);
-        }
+
         if (aux == NULL)
         {
-          if (DEBUG)
-            printf("error: there's more parameters on definition than on declaration\n");
           break;
-        }
-        else
-        {
-          if (DEBUG)
-            printf("Existing label is %s\n", labelToString(aux->label));
         }
         if (typeSpec->label == aux->label)
         {
           if (id != NULL)
             aux->name = id->value;
         }
-        else
-        {
-          if (DEBUG)
-            printf("error: labels don't match\n");
-        }
 
         paramDec = paramDec->brother;
         aux = aux->next;
       }
 
-      if (aux != NULL)
-      {
-        if (DEBUG)
-          printf("error: there's more parameters on declaration than on definition\n");
-      }
       currentTable->isDefined = 1;
     }
 
@@ -173,8 +143,6 @@ int handleNode(Node node)
 
   case FuncDeclaration:
   {
-    if (DEBUG)
-      printf("%s is %s\n", labelToString(node->label), labelToString(FuncDeclaration));
     Node typeSpec = node->child;
     Node id = typeSpec->brother;
     Node paramList = id->brother;
@@ -191,8 +159,6 @@ int handleNode(Node node)
 
   case Declaration:
   {
-    if (DEBUG)
-      printf("%s is %s\n", labelToString(node->label), labelToString(Declaration));
     Node typeSpec = node->child;
     Node id = typeSpec->brother;
     Node aux = id->brother;
@@ -207,8 +173,6 @@ int handleNode(Node node)
 
   case RealLit:
   {
-    if (DEBUG)
-      printf("%s is %s\n", labelToString(node->label), labelToString(RealLit));
     node->type = Double;
     fullExpand(node);
     break;
@@ -216,8 +180,6 @@ int handleNode(Node node)
 
   case IntLit:
   {
-    if (DEBUG)
-      printf("%s is %s\n", labelToString(node->label), labelToString(IntLit));
     node->type = Int;
     fullExpand(node);
     break;
@@ -225,8 +187,6 @@ int handleNode(Node node)
 
   case ChrLit:
   {
-    if (DEBUG)
-      printf("%s is %s\n", labelToString(node->label), labelToString(ChrLit));
     node->type = Int;
     fullExpand(node);
     break;
@@ -245,8 +205,7 @@ int handleNode(Node node)
     putType(node->child);
     putType(node->child->brother);
     node->type = Int;
-    if (DEBUG)
-      printf("Assigned %s to %s\n", labelToString(node->label), labelToString(node->type));
+
     if (node->brother != NULL)
       handleNode(node->brother);
     break;
@@ -264,8 +223,6 @@ int handleNode(Node node)
     }
     if (node->brother != NULL)
       handleNode(node->brother);
-    if (DEBUG)
-      printf("Assigned %s to %s\n", labelToString(node->label), labelToString(node->type));
     break;
   }
   case Add:
@@ -282,8 +239,6 @@ int handleNode(Node node)
     node->type = resolveType(node->child->type, node->child->brother->type);
     if (node->brother != NULL)
       handleNode(node->brother);
-    if (DEBUG)
-      printf("Assigned %s to %s\n", labelToString(node->label), labelToString(node->type));
     break;
   }
   case Store:
@@ -294,8 +249,6 @@ int handleNode(Node node)
     node->type = node->child->type;
     if (node->brother != NULL)
       handleNode(node->brother);
-    if (DEBUG)
-      printf("Assigned %s to %s\n", labelToString(node->label), labelToString(node->type));
     break;
   }
   case Not:
@@ -305,8 +258,6 @@ int handleNode(Node node)
     node->type = Int;
     if (node->brother != NULL)
       handleNode(node->brother);
-    if (DEBUG)
-      printf("Assigned %s to %s\n", labelToString(node->label), labelToString(node->type));
     break;
   }
   case Minus:
@@ -317,8 +268,6 @@ int handleNode(Node node)
     node->type = node->child->type;
     if (node->brother != NULL)
       handleNode(node->brother);
-    if (DEBUG)
-      printf("Assigned %s to %s\n", labelToString(node->label), labelToString(node->type));
     break;
   }
   case While:
@@ -335,8 +284,6 @@ int handleNode(Node node)
     }
     if (node->brother != NULL)
       handleNode(node->brother);
-    if (DEBUG)
-      printf("Assigned %s to %s\n", labelToString(node->label), labelToString(node->type));
     break;
   }
   case Call:
@@ -352,8 +299,6 @@ int handleNode(Node node)
     node->type = node->child->type;
     if (node->brother != NULL)
       handleNode(node->brother);
-    if (DEBUG)
-      printf("Assigned %s to %s\n", labelToString(node->label), labelToString(node->type));
     break;
   }
   case FuncBody:
@@ -370,8 +315,6 @@ int handleNode(Node node)
   /* All operators, terminals and Null are defaulted for now */
   /* ParamList and ParamDeclaration are also defaulted, but they should never occur*/
   default:
-    if (DEBUG)
-      printf("Defaulted %s\n", labelToString(node->label));
     fullExpand(node);
     break;
   }
@@ -419,17 +362,14 @@ char *labelToStringForTable(Label label)
 
 TableList findFunctionEntry(char *name)
 {
-  if(DEBUG)printf("Looking for %s\n", name);
   if (name == NULL)
     return NULL;
 
   TableList aux = globalTable;
   while (aux != NULL)
   {
-    if(DEBUG)printf("Comparing with %s\n", aux->tableNode->name);
     if (strcmp(aux->tableNode->name, name) == 0)
     {
-      if(DEBUG)printf("Found %s\n", name);
       return aux;
     }
     aux = aux->next;
@@ -491,9 +431,6 @@ TableList createFunctionEntry(char *name, Label label, Node paramList, int isDef
     paramDec = paramDec->brother;
   }
 
-  if (DEBUG)
-    printf("Adding a new symbol table: %s\n", newNode->tableNode->name);
-
   aux->next = newNode;
   insertSymbol(globalTable, name, label);
 
@@ -522,15 +459,11 @@ Label resolveType(Label label1, Label label2)
   {
     return Char;
   }
-  if (DEBUG)
-    printf("There is a problem with the labels my dude\n");
   return Char;
 }
 
 void putType(Node node)
 {
-  if (DEBUG)
-    printf("Putting type for %s\n", labelToString(node->label));
   switch (node->label)
   {
   case Id:
@@ -538,8 +471,6 @@ void putType(Node node)
     ArgList argList = findParameter(currentTable, node->value);
     if (argList != NULL)
     {
-      if (DEBUG)
-        printf("%s encontrado na lista de argumentos\n", node->value);
       node->type = argList->label;
       return;
     }
@@ -548,10 +479,6 @@ void putType(Node node)
       SymList symbolEntry = findSymbol(currentTable, node->value);
       if (symbolEntry != NULL)
       {
-        if (DEBUG){
-          printf("%s encontrado na tabela local \n", node->value);
-          printf("Symbol entry label is %s\n", labelToString(symbolEntry->label));
-        }
         node->type = symbolEntry->label;
       }
       else
@@ -559,8 +486,6 @@ void putType(Node node)
         symbolEntry = findSymbol(globalTable, node->value);
         if (symbolEntry != NULL)
         {
-          if (DEBUG)
-            printf("%s encontrado na tabela global\n", node->value);
           node->type = symbolEntry->label;
           TableList aux = findFunctionEntry(node->value);
           if (aux != NULL)
@@ -760,8 +685,6 @@ int insertSymbol(TableList table, char* name, Label label){
   SymList symList = table->tableNode;
   ArgList argList = table->argList;
 
-  char* tableName = symList->name;
-
   while(argList != NULL){
     if(argList->name != NULL){
       if(strcmp(argList->name, name) == 0){
@@ -784,7 +707,6 @@ int insertSymbol(TableList table, char* name, Label label){
   newNode->label = label;
   newNode->next = NULL;
   symList->next = newNode;
-  if(DEBUG) printf("Adding %s to %s table\n", newNode->name, tableName);
   return 1;
 }
 

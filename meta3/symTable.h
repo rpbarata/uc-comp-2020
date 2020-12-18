@@ -3,8 +3,6 @@
 
 #include "structs.h"
 
-# define DEBUG 0
-
 char* labelToStringForTable(Label);
 int handleNode(Node);
 void semantic_analysis(Node);
