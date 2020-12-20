@@ -1,0 +1,45 @@
+#ifndef STRUCTS_FILE
+#define STRUCTS_FILE
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define DEBUG 0
+#define ERROR -1
+
+typedef enum _label{
+	Empty, undef, Program, Declaration, FuncDeclaration, FuncDefinition, ParamList, FuncBody, ParamDeclaration, StatList, If, While, Return, Or, And, Eq, Ne, Lt, Gt, Le, Ge, Add, Sub, Mul, Div, Mod, Not, Minus, Plus, Store, Comma, Call, BitWiseAnd, BitWiseXor, BitWiseOr, Char, ChrLit, Id, Int, Short, IntLit, Double, RealLit, Void, Null
+}Label;
+
+typedef struct _al* Arg_list;
+typedef struct node_s *Node;
+
+typedef struct node_s
+{
+  Label label;
+  Label type;
+  Arg_list arg_list;
+  char *value;
+  Node child;
+  Node brother;
+} Node_t;
+
+typedef struct _t1* Sym_list;
+typedef struct _t1{
+	char* name;
+	Label label;
+  Sym_list next;
+  //Meta 4
+  int active;
+}_Sym_list;
+
+
+typedef struct _al{
+  char* name;
+  Label label;
+  Arg_list next;
+  //Meta 4
+  int register_value;
+}_arg_list;
+
+#endif
