@@ -2,21 +2,16 @@
 
 void printTables() {
   printf("===== Global Symbol Table =====\n");
-  TableList aux = globalTable;
-  SymList globalAux = globalTable->tableNode->next;
-  while (globalAux != NULL)
-  {
-    char *s = labelToStringForTable(globalAux->label);
-    ArgList auxArgs = getFunctionArgs(globalAux->name);
+  TableList entry = globalTable;
+  SymList symbolEntry = globalTable->tableNode->next;
+  while (symbolEntry != NULL) {
+    char *s = labelToStringForTable(symbolEntry->label);
+    ArgList auxArgs = getFunctionArgs(symbolEntry->name);
     if (auxArgs == NULL)
-    {
-      printf("%s\t%s\n", globalAux->name, s);
-    }
-    else
-    {
-      printf("%s\t%s(", globalAux->name, s);
-      while (auxArgs != NULL)
-      {
+      printf("%s\t%s\n", symbolEntry->name, s);
+    else {
+      printf("%s\t%s(", symbolEntry->name, s);
+      while (auxArgs != NULL) {
         printf("%s", labelToStringForTable(auxArgs->label));
         auxArgs = auxArgs->next;
         if (auxArgs != NULL)
@@ -24,45 +19,38 @@ void printTables() {
       }
       printf(")\n");
     }
-    globalAux = globalAux->next;
+    symbolEntry = symbolEntry->next;
   }
-  aux = aux->next;
+  entry = entry->next;
   printf("\n");
-  aux = globalTable;
-  aux = aux->next;
-  while (aux != NULL)
-  {
-    if (aux->isDefined)
-    {
-      printf("===== Function %s Symbol Table =====\n", aux->tableNode->name);
-      SymList auxNode = aux->tableNode;
-      printf("%s\t%s\n", "return", labelToStringForTable(aux->tableNode->label));
-      ArgList auxArgs = aux->argList;
-      while (auxArgs != NULL)
-      {
+  entry = globalTable;
+  entry = entry->next;
+  while (entry != NULL) {
+    if (entry->isDefined) {
+      printf("===== Function %s Symbol Table =====\n", entry->tableNode->name);
+      SymList node = entry->tableNode;
+      printf("%s\t%s\n", "return", labelToStringForTable(entry->tableNode->label));
+      ArgList auxArgs = entry->argList;
+      while (auxArgs != NULL) {
         if (auxArgs->label != Void && auxArgs->name != NULL)
           printf("%s\t%s\tparam\n", auxArgs->name, labelToStringForTable(auxArgs->label));
         auxArgs = auxArgs->next;
       }
-      auxNode = auxNode->next;
-      while (auxNode != NULL)
-      {
-        char *s = labelToStringForTable(auxNode->label);
-        printf("%s\t%s\n", auxNode->name, s);
-        auxNode = auxNode->next;
+      node = node->next;
+      while (node != NULL) {
+        char *s = labelToStringForTable(node->label);
+        printf("%s\t%s\n", node->name, s);
+        node = node->next;
       }
       printf("\n");
     }
-    aux = aux->next;
+    entry = entry->next;
   }
 }
 
-int handleNode(Node node)
-{
-  switch (node->label)
-  {
-  case Program:
-  {
+int handleNode(Node node) {
+  switch (node->label) {
+  case Program: {
     globalTable = (TableList)malloc(sizeof(_tableList));
     SymList newNode = (SymList)malloc(sizeof(_SymList));
     newNode->name = "Global";
@@ -73,65 +61,56 @@ int handleNode(Node node)
 
     currentTable = globalTable;
 
-    Node aux = (Node)malloc(sizeof(Node_t));   //paramlist
-    aux->child = (Node)malloc(sizeof(Node_t)); //ParamDeclaration
-    aux->child->brother = NULL;
+    Node param = (Node)malloc(sizeof(Node_t));
+    param->child = (Node)malloc(sizeof(Node_t));
+    param->child->brother = NULL;
     Node typeSpec = (Node)malloc(sizeof(Node_t));
     typeSpec->label = Int;
-    aux->child->child = typeSpec;
+    param->child->child = typeSpec;
     typeSpec->brother = NULL;
-    createFunctionEntry("putchar", Int, aux, 0);
+    createFunctionEntry("putchar", Int, param, 0);
 
     typeSpec->label = Void;
-    createFunctionEntry("getchar", Int, aux, 0);
+    createFunctionEntry("getchar", Int, param, 0);
 
     free(typeSpec);
-    free(aux->child);
-    free(aux);
+    free(param->child);
+    free(param);
 
     fullExpand(node);
     break;
   }
 
-  case FuncDefinition:
-  {
+  case FuncDefinition: {
     Node typeSpec = node->child;
     Node id = typeSpec->brother;
-    Node paramList = id->brother;
+    Node param = id->brother;
 
     currentTable = findFunctionEntry(id->value);
-    if (currentTable == NULL)
-    {
-      currentTable = createFunctionEntry(id->value, typeSpec->label, paramList, 1);
+    if (currentTable == NULL) {
+      currentTable = createFunctionEntry(id->value, typeSpec->label, param, 1);
     }
-    else
-    {
-      // Ja foi declarada, temos que verificar parametros
-      ArgList aux = currentTable->argList;
-      Node paramDec = paramList->child;
-      while (paramDec != NULL)
-      {
+    else {
+      ArgList arg = currentTable->argList;
+      Node paramDec = param->child;
+      while (paramDec != NULL) {
         Node typeSpec = paramDec->child;
         Node id = typeSpec->brother;
 
-        if (aux == NULL)
-        {
+        if (arg == NULL)
           break;
-        }
-        if (typeSpec->label == aux->label)
-        {
-          if (id != NULL)
-            aux->name = id->value;
+        else if (typeSpec->label == arg->label && id != NULL) {
+          arg->name = id->value;
         }
 
         paramDec = paramDec->brother;
-        aux = aux->next;
+        arg = arg->next;
       }
 
       currentTable->isDefined = 1;
     }
 
-    handleNode(paramList->brother); //FuncBody
+    handleNode(param->brother);
 
     currentTable = globalTable;
 
@@ -141,15 +120,13 @@ int handleNode(Node node)
     break;
   }
 
-  case FuncDeclaration:
-  {
+  case FuncDeclaration: {
     Node typeSpec = node->child;
     Node id = typeSpec->brother;
-    Node paramList = id->brother;
+    Node param = id->brother;
 
-    // TODO: We'll need to do something about re-declaring (else)
     if (findFunctionEntry(id->value) == NULL)
-      createFunctionEntry(id->value, typeSpec->label, paramList, 0);
+      createFunctionEntry(id->value, typeSpec->label, param, 0);
 
     if (node->brother != NULL)
       handleNode(node->brother);
@@ -157,40 +134,38 @@ int handleNode(Node node)
     break;
   }
 
-  case Declaration:
-  {
+  case Declaration: {
     Node typeSpec = node->child;
     Node id = typeSpec->brother;
-    Node aux = id->brother;
+    Node param = id->brother;
+
     insertSymbol(currentTable, id->value, typeSpec->label);
-    while(aux != NULL){
-      putType(aux);
-      aux = aux->brother;
+    while(param != NULL) {
+      putType(param);
+      param = param->brother;
     }
     fullExpand(node);
     break;
   }
 
-  case RealLit:
-  {
+  case RealLit: {
     node->type = Double;
     fullExpand(node);
     break;
   }
 
-  case IntLit:
-  {
+  case IntLit: {
     node->type = Int;
     fullExpand(node);
     break;
   }
 
-  case ChrLit:
-  {
+  case ChrLit: {
     node->type = Int;
     fullExpand(node);
     break;
   }
+
   case Or:
   case And:
   case Eq:
@@ -199,8 +174,8 @@ int handleNode(Node node)
   case Le:
   case Gt:
   case Ge:
-  case Mod:
-  {
+
+  case Mod: {
     handleNode(node->child);
     putType(node->child);
     putType(node->child->brother);
@@ -210,29 +185,30 @@ int handleNode(Node node)
       handleNode(node->brother);
     break;
   }
-  case Comma:
-  {
+
+  case Comma: {
     handleNode(node->child);
     putType(node->child);
     putType(node->child->brother);
-    if(node->child->type == undef){
+
+    if(node->child->type == undef)
       node->type = undef;
-    }
-    else{
+    else
       node->type = node->child->brother->type;
-    }
+
     if (node->brother != NULL)
       handleNode(node->brother);
     break;
   }
+
   case Add:
   case Sub:
   case Mul:
   case Div:
   case BitWiseAnd:
   case BitWiseXor:
-  case BitWiseOr:
-  {
+
+  case BitWiseOr: {
     handleNode(node->child);
     putType(node->child);
     putType(node->child->brother);
@@ -241,8 +217,8 @@ int handleNode(Node node)
       handleNode(node->brother);
     break;
   }
-  case Store:
-  {
+
+  case Store: {
     handleNode(node->child);
     putType(node->child);
     putType(node->child->brother);
@@ -251,8 +227,8 @@ int handleNode(Node node)
       handleNode(node->brother);
     break;
   }
-  case Not:
-  {
+
+  case Not: {
     handleNode(node->child);
     putType(node->child);
     node->type = Int;
@@ -260,9 +236,10 @@ int handleNode(Node node)
       handleNode(node->brother);
     break;
   }
+
   case Minus:
-  case Plus:
-  {
+
+  case Plus: {
     handleNode(node->child);
     putType(node->child);
     node->type = node->child->type;
@@ -270,15 +247,16 @@ int handleNode(Node node)
       handleNode(node->brother);
     break;
   }
+
   case While:
   case Return:
-  case If:
-  {
+
+  case If: {
     handleNode(node->child);
     putType(node->child);
     Node aux = node->child->brother;
-    while (aux != NULL)
-    {
+
+    while (aux != NULL) {
       putType(aux);
       aux = aux->brother;
     }
@@ -286,13 +264,12 @@ int handleNode(Node node)
       handleNode(node->brother);
     break;
   }
-  case Call:
-  {
+
+  case Call: {
     handleNode(node->child);
     putType(node->child);
     Node aux = node->child->brother;
-    while (aux != NULL)
-    {
+    while (aux != NULL) {
       putType(aux);
       aux = aux->brother;
     }
@@ -301,8 +278,8 @@ int handleNode(Node node)
       handleNode(node->brother);
     break;
   }
-  case FuncBody:
-  {
+
+  case FuncBody: {
     Node children = node->child;
     while(children != NULL){
       if(children->label == Id)
@@ -312,8 +289,6 @@ int handleNode(Node node)
     fullExpand(node);
   }
 
-  /* All operators, terminals and Null are defaulted for now */
-  /* ParamList and ParamDeclaration are also defaulted, but they should never occur*/
   default:
     fullExpand(node);
     break;
@@ -321,19 +296,16 @@ int handleNode(Node node)
   return 1;
 }
 
-void fullExpand(Node node)
-{
+void fullExpand(Node node) {
   if (node->child != NULL)
     handleNode(node->child);
   if (node->brother != NULL)
     handleNode(node->brother);
 }
 
-char *labelToStringForTable(Label label)
-{
+char *labelToStringForTable(Label label) {
   char *s;
-  switch (label)
-  {
+  switch (label) {
   case Char:
     s = "char";
     break;
@@ -354,35 +326,28 @@ char *labelToStringForTable(Label label)
     break;
   default:
     s = labelToString(label);
-    //printf("\n\n\nTHIS SHOULD NEVER HAPPEN!\n\n\n");
     break;
   }
   return s;
 }
 
-TableList findFunctionEntry(char *name)
-{
+TableList findFunctionEntry(char *name) {
   if (name == NULL)
     return NULL;
 
-  TableList aux = globalTable;
-  while (aux != NULL)
-  {
-    if (strcmp(aux->tableNode->name, name) == 0)
-    {
-      return aux;
-    }
-    aux = aux->next;
+  TableList entry = globalTable;
+  while (entry != NULL) {
+    if (strcmp(entry->tableNode->name, name) == 0)
+      return entry;
+    entry = entry->next;
   }
   return NULL;
 }
 
-TableList createFunctionEntry(char *name, Label label, Node paramList, int isDefinition)
-{
-  // Assumes it's not already on the table
-  TableList aux = globalTable;
-  while (aux->next != NULL)
-    aux = aux->next;
+TableList createFunctionEntry(char *name, Label label, Node paramList, int isDefinition) {
+  TableList entry = globalTable;
+  while (entry->next != NULL)
+    entry = entry->next;
 
   TableList newNode = (TableList)malloc(sizeof(_tableList));
   newNode->next = NULL;
@@ -393,8 +358,6 @@ TableList createFunctionEntry(char *name, Label label, Node paramList, int isDef
   newList->name = name;
   newNode->tableNode = newList;
 
-  // A bit messy, but it adds all the arguments at once, if there are any
-  // Might refactor later, but I think it works anyway
   Node paramDec = paramList->child;
   Node typeSpec = paramDec->child;
   Node id = typeSpec->brother;
@@ -407,13 +370,10 @@ TableList createFunctionEntry(char *name, Label label, Node paramList, int isDef
     args->name = NULL;
 
   args->next = NULL;
-
   newNode->argList = args;
-
   paramDec = paramDec->brother;
 
-  while (paramDec != NULL)
-  {
+  while (paramDec != NULL) {
     typeSpec = paramDec->child;
     id = typeSpec->brother;
 
@@ -431,273 +391,191 @@ TableList createFunctionEntry(char *name, Label label, Node paramList, int isDef
     paramDec = paramDec->brother;
   }
 
-  aux->next = newNode;
+  entry->next = newNode;
   insertSymbol(globalTable, name, label);
 
   return newNode;
 }
 
-Label resolveType(Label label1, Label label2)
-{
+Label resolveType(Label label1, Label label2) {
   if (label1 == undef || label2 == undef)
-  {
     return undef;
-  }
-  if (label1 == Double || label2 == Double)
-  {
+  else if (label1 == Double || label2 == Double)
     return Double;
-  }
-  if (label1 == Int || label2 == Int)
-  {
+  else if (label1 == Int || label2 == Int)
     return Int;
-  }
-  if (label1 == Short || label2 == Short)
-  {
+  else if (label1 == Short || label2 == Short)
     return Short;
-  }
-  if (label1 == Char || label2 == Char)
-  {
+  else if (label1 == Char || label2 == Char)
     return Char;
-  }
   return Char;
 }
 
-void putType(Node node)
-{
-  switch (node->label)
-  {
-  case Id:
-  {
-    ArgList argList = findParameter(currentTable, node->value);
-    if (argList != NULL)
-    {
-      node->type = argList->label;
-      return;
-    }
-    else
-    {
-      SymList symbolEntry = findSymbol(currentTable, node->value);
-      if (symbolEntry != NULL)
-      {
-        node->type = symbolEntry->label;
+void putType(Node node) {
+  switch (node->label) {
+    case Id: {
+      ArgList argList = findParameter(currentTable, node->value);
+      if (argList != NULL) {
+        node->type = argList->label;
+        return;
       }
-      else
-      {
-        symbolEntry = findSymbol(globalTable, node->value);
+      else {
+        SymList symbolEntry = findSymbol(currentTable, node->value);
         if (symbolEntry != NULL)
-        {
           node->type = symbolEntry->label;
-          TableList aux = findFunctionEntry(node->value);
-          if (aux != NULL)
-          {
-            node->argList = aux->argList;
+        else {
+          symbolEntry = findSymbol(globalTable, node->value);
+          if (symbolEntry != NULL) {
+            node->type = symbolEntry->label;
+            TableList entry = findFunctionEntry(node->value);
+            if (entry != NULL)
+              node->argList = entry->argList;
           }
         }
+        if(symbolEntry == NULL) {
+          node->type = undef;
+        }
       }
-      if(symbolEntry == NULL){
-        node->type = undef;
-      }
+      break;
     }
-    break;
-  }
+
     case Void:
     case Char:
     case Double:
     case Int:
+
     case Short:
       node->type = node->label;
       break;
-    default:
-    {
+
+    default: {
       if (node->type == Empty)
-      {
-        /*THIS IS A HACK, O HOMEM DOS KEBABS SABERA COMO FAZER ISTO DECENTEMENTE
-      printf("Putting type for %s\n", labelToString(node->label));
-      printf("---\nThis should never happen\n---\n");
-      SE ELE NAO SOUBER VAMOS TENTAR FAZER ISTO EM HORAS MAIS NORMAIS*/
         node->type = Empty;
-      }
       break;
     }
-    }
-}
-
-char *labelToString(Label label)
-{
-  char *s;
-  switch (label)
-  {
-  case Empty:
-    s = "Empty";
-    break;
-  case undef:
-    s = "undef";
-    break;
-  case Program:
-    s = "Program";
-    break;
-  case Declaration:
-    s = "Declaration";
-    break;
-  case FuncDeclaration:
-    s = "FuncDeclaration";
-    break;
-  case FuncDefinition:
-    s = "FuncDefinition";
-    break;
-  case ParamList:
-    s = "ParamList";
-    break;
-  case FuncBody:
-    s = "FuncBody";
-    break;
-  case ParamDeclaration:
-    s = "ParamDeclaration";
-    break;
-  case StatList:
-    s = "StatList";
-    break;
-  case If:
-    s = "If";
-    break;
-  case While:
-    s = "While";
-    break;
-  case Return:
-    s = "Return";
-    break;
-  case Or:
-    s = "Or";
-    break;
-  case And:
-    s = "And";
-    break;
-  case Eq:
-    s = "Eq";
-    break;
-  case Ne:
-    s = "Ne";
-    break;
-  case Lt:
-    s = "Lt";
-    break;
-  case Gt:
-    s = "Gt";
-    break;
-  case Le:
-    s = "Le";
-    break;
-  case Ge:
-    s = "Ge";
-    break;
-  case Add:
-    s = "Add";
-    break;
-  case Sub:
-    s = "Sub";
-    break;
-  case Mul:
-    s = "Mul";
-    break;
-  case Div:
-    s = "Div";
-    break;
-  case Mod:
-    s = "Mod";
-    break;
-  case Not:
-    s = "Not";
-    break;
-  case Minus:
-    s = "Minus";
-    break;
-  case Plus:
-    s = "Plus";
-    break;
-  case Store:
-    s = "Store";
-    break;
-  case Comma:
-    s = "Comma";
-    break;
-  case Call:
-    s = "Call";
-    break;
-  case BitWiseAnd:
-    s = "BitWiseAnd";
-    break;
-  case BitWiseXor:
-    s = "BitWiseXor";
-    break;
-  case BitWiseOr:
-    s = "BitWiseOr";
-    break;
-  case Char:
-    s = "Char";
-    break;
-  case ChrLit:
-    s = "ChrLit";
-    break;
-  case Id:
-    s = "Id";
-    break;
-  case Int:
-    s = "Int";
-    break;
-  case Short:
-    s = "Short";
-    break;
-  case IntLit:
-    s = "IntLit";
-    break;
-  case Double:
-    s = "Double";
-    break;
-  case RealLit:
-    s = "RealLit";
-    break;
-  case Void:
-    s = "Void";
-    break;
-  case Null:
-    s = "Null";
-    break;
   }
-  return s;
 }
 
-ArgList getFunctionArgs(char *name)
-{
-  TableList aux = globalTable;
-  while (aux != NULL)
-  {
-    if (strcmp(aux->tableNode->name, name) == 0)
-    {
-      return aux->argList;
-    }
-    aux = aux->next;
+char *labelToString(Label label) {
+  switch (label) {
+  case Empty:
+    return "Empty";
+  case undef:
+    return "undef";
+  case Program:
+    return "Program";
+  case Declaration:
+    return "Declaration";
+  case FuncDeclaration:
+    return "FuncDeclaration";
+  case FuncDefinition:
+    return "FuncDefinition";
+  case ParamList:
+    return "ParamList";
+  case FuncBody:
+    return "FuncBody";
+  case ParamDeclaration:
+    return "ParamDeclaration";
+  case StatList:
+    return "StatList";
+  case If:
+    return "If";
+  case While:
+    return "While";
+  case Return:
+    return "Return";
+  case Or:
+    return "Or";
+  case And:
+    return "And";
+  case Eq:
+    return "Eq";
+  case Ne:
+    return "Ne";
+  case Lt:
+    return "Lt";
+  case Gt:
+    return "Gt";
+  case Le:
+    return "Le";
+  case Ge:
+    return "Ge";
+  case Add:
+    return "Add";
+  case Sub:
+    return "Sub";
+  case Mul:
+    return "Mul";
+  case Div:
+    return "Div";
+  case Mod:
+    return "Mod";
+  case Not:
+    return "Not";
+  case Minus:
+    return "Minus";
+  case Plus:
+    return "Plus";
+  case Store:
+    return "Store";
+  case Comma:
+    return "Comma";
+  case Call:
+    return "Call";
+  case BitWiseAnd:
+    return "BitWiseAnd";
+  case BitWiseXor:
+    return "BitWiseXor";
+  case BitWiseOr:
+    return "BitWiseOr";
+  case Char:
+    return "Char";
+  case ChrLit:
+    return "ChrLit";
+  case Id:
+    return "Id";
+  case Int:
+    return "Int";
+  case Short:
+    return "Short";
+  case IntLit:
+    return "IntLit";
+  case Double:
+    return "Double";
+  case RealLit:
+    return "RealLit";
+  case Void:
+    return "Void";
+  case Null:
+    return "Null";
+  }
+}
+
+ArgList getFunctionArgs(char *name) {
+  TableList entry = globalTable;
+  while (entry != NULL) {
+    if (strcmp(entry->tableNode->name, name) == 0)
+      return entry->argList;
+    entry = entry->next;
   }
   return NULL;
 }
 
 int insertSymbol(TableList table, char* name, Label label){
-  //Nao protegido para table == null
   SymList symList = table->tableNode;
   ArgList argList = table->argList;
 
-  while(argList != NULL){
-    if(argList->name != NULL){
-      if(strcmp(argList->name, name) == 0){
-        //-1 means error
+  while(argList != NULL) {
+    if(argList->name != NULL) {
+      if(strcmp(argList->name, name) == 0) {
         return -1;
       }
     }
     argList = argList->next;
   }
-  while(symList->next != NULL){
+  while(symList->next != NULL) {
     symList = symList->next;
-    if(strcmp(symList->name, name) == 0){
-      //-1 means error
+    if(strcmp(symList->name, name) == 0) {
       return -1;
     }
   }
@@ -711,26 +589,24 @@ int insertSymbol(TableList table, char* name, Label label){
 }
 
 SymList findSymbol(TableList tableList, char* name){
-  SymList aux = tableList->tableNode->next;
-  while(aux != NULL){
-    //Isto nao esta protegido para segfault mas acho que nao e preciso
-    if(strcmp(aux->name, name) == 0){
-      return aux;
+  SymList entry = tableList->tableNode->next;
+  while(entry != NULL) {
+    if(strcmp(entry->name, name) == 0) {
+      return entry;
     }
-    aux = aux->next;
+    entry = entry->next;
   }
   return NULL;
 }
 
 ArgList findParameter(TableList tableList, char* name){
-  ArgList aux = tableList->argList;
-  while(aux != NULL){
-    //Isto nao esta protegido para segfault mas acho que nao e preciso
-    if(aux->name != NULL)
-      if(strcmp(aux->name, name) == 0){
-        return aux;
+  ArgList entry = tableList->argList;
+  while(entry != NULL) {
+    if(entry->name != NULL)
+      if(strcmp(entry->name, name) == 0) {
+        return entry;
       }
-    aux = aux->next;
+    entry = entry->next;
   }
   return NULL;
 }
