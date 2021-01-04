@@ -15,8 +15,7 @@ typedef struct _t1* SymList;
 typedef struct _tl* TableList;
 typedef struct node_s *Node;
 
-typedef struct node_s
-{
+typedef struct node_s {
   Label label;
   Label type;
   ArgList argList;
@@ -29,12 +28,14 @@ typedef struct _t1{
 	char* name;
 	Label label;
   SymList next;
+	int active;
 }_SymList;
 
 typedef struct _al{
   char* name;
   Label label;
   ArgList next;
+	int varValue;
 }_argList;
 
 typedef struct _tl{

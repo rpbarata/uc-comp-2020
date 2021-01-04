@@ -7,17 +7,22 @@ Rui Barata, Nº2015238609
   #include "ast.h"
   #include "y.tab.h"
   #include "symTable.h"
-  #define INVALID_CHAR                      1
-  #define UNTERMINATED_COMMENT              2
-  #define UNTERMINATED_CHAR                 3
-  #define ILLEGAL_CHAR                      4
-  #define PRINT_ERRORS                      5 // 1
-  #define PRINT_TOKENS_ERRORS               6 // 2
-  #define PRINT_SYNTAX_AND_LEXICAL_ERRORS   7 // 3
-  #define PRINT_SYNTAX_TREE                 8 // 4
-  #define PRINT_SYMB_TABLE_AND_TREE         9
+  #include "generator.h"
 
-  int flag = PRINT_SYNTAX_AND_LEXICAL_ERRORS;
+  #define INVALID_CHAR                                    1
+  #define UNTERMINATED_COMMENT                            2
+  #define UNTERMINATED_CHAR                               3
+  #define ILLEGAL_CHAR                                    4
+
+  #define PRINT_LEXICAL_ERRORS                            5
+  #define PRINT_TOKENS_AND_LEXICAL_ERRORS                 6
+  #define PRINT_SYNTAX_AND_LEXICAL_ERRORS                 7
+  #define PRINT_LEXICAL_AND_SYNTAX_ERRORS_AND_SYNTAX_TREE 8
+  #define PRINT_SYMB_ERRORS_TABLE_AND_TREE                9
+  #define PRINT_SYMB_ERRORS                               10
+  #define DEFAULT                                         11
+
+  int flag = DEFAULT;
   int errorFlag = 0;
   int line = 1;
   int column = 1;
@@ -97,11 +102,12 @@ void                      { newToken("VOID"); return VOID;}
 %%
 int main(int argc, char** argv) {
   if(argc == 2) {
-    if (strcmp(argv[1], "-l") == 0) flag = PRINT_TOKENS_ERRORS; //2
-    else if (strcmp(argv[1], "-e1") == 0) flag = PRINT_ERRORS; //1
-    else if (strcmp(argv[1], "-t") == 0) flag = PRINT_SYNTAX_TREE; //4
-    else if (strcmp(argv[1], "-e2") == 0) flag = PRINT_SYNTAX_AND_LEXICAL_ERRORS; //3
-    else if (strcmp(argv[1], "-s") == 0) flag = PRINT_SYMB_TABLE_AND_TREE; //6
+    if (strcmp(argv[1], "-l") == 0)       flag = PRINT_TOKENS_AND_LEXICAL_ERRORS;
+    else if (strcmp(argv[1], "-e1") == 0) flag = PRINT_LEXICAL_ERRORS;
+    else if (strcmp(argv[1], "-t") == 0)  flag = PRINT_LEXICAL_AND_SYNTAX_ERRORS_AND_SYNTAX_TREE;
+    else if (strcmp(argv[1], "-e2") == 0) flag = PRINT_SYNTAX_AND_LEXICAL_ERRORS;
+    else if (strcmp(argv[1], "-s") == 0)  flag = PRINT_SYMB_ERRORS_TABLE_AND_TREE;
+    else if (strcmp(argv[1], "-e3") == 0) flag = PRINT_SYMB_ERRORS;
   }
 
   yyparse();
@@ -110,11 +116,16 @@ int main(int argc, char** argv) {
   }
 
   if(!errorFlag) {
-    if(flag == PRINT_SYNTAX_TREE) printTree(treeRoot, 0);
-    else if(flag == PRINT_SYMB_TABLE_AND_TREE){
+    if(flag == PRINT_LEXICAL_AND_SYNTAX_ERRORS_AND_SYNTAX_TREE) printTree(treeRoot, 0);
+    else if(flag == PRINT_SYMB_ERRORS) handleNode(treeRoot);
+    else if(flag == PRINT_SYMB_ERRORS_TABLE_AND_TREE){
       handleNode(treeRoot);
       printTables();
       printTree(treeRoot, 0);
+    }
+    else if(flag == DEFAULT) {
+      handleNode(treeRoot);
+      generateCode(treeRoot);
     }
   }
 
@@ -127,14 +138,14 @@ int yywrap() {
 }
 
 void newToken(char* keyword) {
-  if(flag == PRINT_TOKENS_ERRORS){
+  if(flag == PRINT_TOKENS_AND_LEXICAL_ERRORS){
     printf("%s\n", keyword);
   }
   column += yyleng;
 }
 
 void newTokenyyText(char* token) {
-  if(flag == PRINT_TOKENS_ERRORS){
+  if(flag == PRINT_TOKENS_AND_LEXICAL_ERRORS){
     printf("%s(%s)\n", token, yytext);
   }
   column += yyleng;
