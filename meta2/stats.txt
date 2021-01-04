@@ -1,7 +1,0 @@
-E:AST - Variable and function declarations/definitions  80/80
-F:AST - Expressions                                     140/140
-G:AST - Statements                                      80/80
-H:AST - Full Programs                                   88/100
-
-
-A 443/600

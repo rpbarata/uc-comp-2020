@@ -29,8 +29,6 @@ typedef struct _t1{
 	char* name;
 	Label label;
   Sym_list next;
-  //Meta 4
-  int active;
 }_Sym_list;
 
 
@@ -38,8 +36,6 @@ typedef struct _al{
   char* name;
   Label label;
   Arg_list next;
-  //Meta 4
-  int register_value;
 }_arg_list;
 
 #endif
